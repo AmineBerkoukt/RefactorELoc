@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import {generatePasswordResetEmailContent} from "../utils/emailContent.js";
 import {sendEmail} from "../services/emailService.js";
-
+import path from 'path';
 export const register = async (req, res) => {
     try {
         const {
@@ -11,6 +11,7 @@ export const register = async (req, res) => {
             lastName,
             email,
             password,
+            cin,
             phoneNumber,
             address,
             studies
@@ -29,13 +30,22 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        let profilePhotoPath = null;
+        if (req.file) {
+            profilePhotoPath = req.file.path; // Remplacer les backslashes par des slashes pour la compatibilité
+        } else {
+            // Si aucune photo n'est fournie, utiliser la photo par défaut
+            profilePhotoPath = path.join('uploads', 'defaultProfilePhoto.png');
+        }
         const newUser = new User({
             firstName,
             lastName,
             email,
             password: hashedPassword,
+            cin,
             phoneNumber,
             address,
+            profilePhoto: profilePhotoPath,
             role: "student"
         });
 
