@@ -1,6 +1,5 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
-import cloudinary from "../config/cloudinary.js";
 import { getReceiverSocketId, io } from "../config/socket.js";
 
 /**
@@ -41,19 +40,19 @@ export const getMessages = async (req, res) => {
 
 /**
  * Send a new message and notify the receiver via socket
+ * Note: `uploadPostImages` middleware should be used in the route.
  */
 export const sendMessage = async (req, res) => {
     try {
-        const { text, image } = req.body;
+        const { text } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
+        // Check if an image was uploaded
         let imageUrl = null;
-
-        if (image) {
-            // Upload base64 image to Cloudinary
-            const uploadResponse = await cloudinary.uploader.upload(image);
-            imageUrl = uploadResponse.secure_url;
+        if (req.file) {
+            // File path relative to the server
+            imageUrl = `/uploads/${req.user.id}/posts/${req.file.filename}`;
         }
 
         const newMessage = new Message({

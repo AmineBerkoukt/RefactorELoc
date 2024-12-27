@@ -21,6 +21,7 @@ import cors from 'cors';
 import { app, server } from "./src/config/socket.js";
 import path from "path";
 import {fileURLToPath} from "url";
+import messageRoutes from "./src/routes/messageRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -57,6 +58,7 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/favorises', favoriseRoutes);
 app.use('/api/evaluations', evaluateRoutes);
+app.use('/api/messages', messageRoutes);
 
 
 // Route to test file upload
