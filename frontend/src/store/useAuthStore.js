@@ -6,9 +6,7 @@ import { io } from "socket.io-client";
 // Set the BASE_URL based on the environment
 const BASE_URL = "http://localhost:5000/api";
 
-// Define the Bearer token
-const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Njg4MzMwNDZjNDQ2ZTA2ODBhMjAwOCIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYW1pbmVAZS5jb20iLCJpYXQiOjE3MzUyMTM4ODYsImV4cCI6MTczNzgwNTg4Nn0.IM8LQSE2annilan5R-Xego3GO1n-aYnDSnVYwyjKAbM";
+const token = localStorage.getItem('token');
 
 // Define the Zustand store
 export const useAuthStore = create((set, get) => ({
@@ -58,9 +56,11 @@ export const useAuthStore = create((set, get) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
-      const res = await axios.post(BASE_URL + "/auth/login", data, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.post(BASE_URL + "/auth/login", data);
+
+
+      localStorage.setItem('token', res.data.token);
+
       set({ authUser: res.data });
       toast.success("Logged in successfully");
       get().connectSocket();
@@ -89,8 +89,11 @@ export const useAuthStore = create((set, get) => ({
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
-      const res = await axios.put(BASE_URL + "/auth/update-profile", data, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await axios.put(BASE_URL + "/users/update-profile", data, {
+        headers: { Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+
       });
       set({ authUser: res.data });
       toast.success("Profile updated successfully");

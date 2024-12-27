@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import path from "path";
 
 // Controller to fetch all users
 export const getUsers = async (req, res) => {
@@ -35,31 +36,19 @@ export const updateProfile = async (req, res) => {
             });
         }
 
+        let profilePhotoPath = user.profilePhoto; // Par défaut, garder l'ancienne photo
+        if (req.file) {
+            //profilePhotoPath = `/uploads/${path.basename(req.file.path)}`;
+            profilePhotoPath = `/uploads/${req.user.id}/${path.basename(req.file.path)}`;
+//http://localhost:5000//uploads/27-12-2024_01-18-49-Capture.png
+        }
+// http://localhost:5000//uploads/27-12-2024_01-18-49-Capture.png
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id,
-            { firstName, lastName, address, phoneNumber },
+            { firstName, lastName, address, phoneNumber, studies, profilePhoto: profilePhotoPath, },
             { new: true, runValidators: true }
         ).select('-password');
 
-        if (user.role === 'student' && studies) {
-            const updatedStudent = await Student.findOneAndUpdate(
-                { userId: req.user.id },
-                { studies },
-                { new: true, runValidators: true }
-            );
-
-            if (!updatedStudent) {
-                return res.status(404).json({
-                    message: 'Profil étudiant non trouvé'
-                });
-            }
-
-            return res.json({
-                message: 'Profil et informations d\'études mis à jour avec succès',
-                user: updatedUser,
-                studentInfo: updatedStudent
-            });
-        }
 
         res.json({
             message: 'Profil mis à jour avec succès',
@@ -119,5 +108,17 @@ export const searchUsers = async (req, res) => {
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Failed to search users", error: error.message });
+    }
+};
+
+export const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) {
+            return res.status(404).json({message: "no user found"});
+        }
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({message: "failed to get user",  error: error.message});
     }
 };

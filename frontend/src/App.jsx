@@ -1,5 +1,5 @@
 import Navbar from "./components/Navbar";
-
+import { useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
@@ -12,7 +12,6 @@ import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
-import { Toaster } from "react-hot-toast";
 
 
 
@@ -24,15 +23,22 @@ const App = () => {
     const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
     const { theme } = useThemeStore();
 
-    console.log({ onlineUsers });
+    const location = useLocation(); // Hook pour accéder à la route actuelle
+
+    //console.log({ onlineUsers });
+
+    const publicRoutes = ["/login", "/signup", "/forgot-password", "/reset-password"];
 
     useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
+        if (!publicRoutes.includes(location.pathname)) {
+            checkAuth();
+        }
+    }, [checkAuth, location.pathname]);
 
     console.log({ authUser });
+    console.log({ location });
 
-    if (isCheckingAuth && !authUser)
+    if (isCheckingAuth && !authUser && !publicRoutes.includes(location.pathname))
         return (
             <div className="flex items-center justify-center h-screen">
                 <Loader className="size-10 animate-spin" />

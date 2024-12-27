@@ -19,11 +19,15 @@ import { authenticateToken } from './src/middlewares/authMiddleware.js';
 //Socket
 import cors from 'cors';
 import { app, server } from "./src/config/socket.js";
+import path from "path";
+import {fileURLToPath} from "url";
 
 dotenv.config();
 connectDB();
 
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(
     cors({
@@ -40,6 +44,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(authenticateToken);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //Auth routes :
 

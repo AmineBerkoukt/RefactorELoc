@@ -5,8 +5,10 @@ export const registrationSchema = Joi.object({
     lastName: Joi.string().trim().required(),
     email: Joi.string().trim().email().lowercase().required(),
     password: Joi.string().required(),
+    cin: Joi.string().trim().required(),
     phoneNumber: Joi.string().length(10).required(),
     address: Joi.string().trim().required(),
+    profilePhoto: Joi.string().trim(),
     studies: Joi.object({
         level: Joi.string().trim(),
         school: Joi.string().trim(),
@@ -22,10 +24,10 @@ export const loginSchema = Joi.object({
 export const updateProfileSchema = Joi.object({
     firstName: Joi.string().trim(),
     lastName: Joi.string().trim(),
+    phoneNumber: Joi.string().length(10),
     address: Joi.string().trim(),
     studies: Joi.object({
             level: Joi.string().trim(),
             school: Joi.string().trim(),
     }),
-
-}).min(1); //au moins un champ est donné !!!
+});
