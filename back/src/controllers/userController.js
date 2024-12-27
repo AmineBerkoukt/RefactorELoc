@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import path from "path";
 
 // Controller to fetch all users
 export const getUsers = async (req, res) => {
@@ -37,9 +38,11 @@ export const updateProfile = async (req, res) => {
 
         let profilePhotoPath = user.profilePhoto; // Par défaut, garder l'ancienne photo
         if (req.file) {
-            profilePhotoPath = req.file.path; // Chemin de la nouvelle photo
+            //profilePhotoPath = `/uploads/${path.basename(req.file.path)}`;
+            profilePhotoPath = `/uploads/${req.user.id}/${path.basename(req.file.path)}`;
+//http://localhost:5000//uploads/27-12-2024_01-18-49-Capture.png
         }
-
+// http://localhost:5000//uploads/27-12-2024_01-18-49-Capture.png
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id,
             { firstName, lastName, address, phoneNumber, studies, profilePhoto: profilePhotoPath, },

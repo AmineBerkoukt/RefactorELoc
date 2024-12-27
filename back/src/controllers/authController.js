@@ -32,7 +32,7 @@ export const register = async (req, res) => {
 
         let profilePhotoPath = null;
         if (req.file) {
-            profilePhotoPath = req.file.path; // Remplacer les backslashes par des slashes pour la compatibilité
+            profilePhotoPath = `/uploads/${req.user.id}/${path.basename(req.file.path)}`;
         } else {
             // Si aucune photo n'est fournie, utiliser la photo par défaut
             profilePhotoPath = path.join('uploads', 'defaultProfilePhoto.png');

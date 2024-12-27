@@ -6,7 +6,7 @@ dotenv.config()
 export const authenticateToken = (req, res, next) => {
     console.log("authMiddleware executed !");
 
-    if (req.originalUrl.startsWith('/api/auth')) {
+    if (req.originalUrl.startsWith('/api/auth') || req.originalUrl.startsWith('/uploads')) {
         console.log('Condition verified, skipping authMiddleware!');
         return next();
     }
